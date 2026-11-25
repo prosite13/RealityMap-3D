@@ -85,7 +85,7 @@ function onXRFrame(t,frame){
   const worldFromView=new DOMMatrix(view.transform.matrix);
   const stride=Math.max(5,Math.ceil(Math.max(di.width,di.height)/90));
   for(let y=0;y<di.height;y+=stride)for(let x=0;x<di.width;x+=stride){
-   let depth=di.getDepthInMeters?di.getDepthInMeters(x,y):null;
+   let depth=di.getDepthInMeters?di.getDepthInMeters((x+.5)/di.width,(y+.5)/di.height):null;
    if(!Number.isFinite(depth)||depth<.15||depth>8)continue;
    const uv=invDepth.transformPoint(new DOMPoint((x+.5)/di.width,(y+.5)/di.height,0,1));
    if(!Number.isFinite(uv.x)||!Number.isFinite(uv.y))continue;
