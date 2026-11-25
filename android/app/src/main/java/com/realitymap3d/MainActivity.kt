@@ -20,13 +20,7 @@ import com.google.ar.core.Coordinates2d
 import com.google.ar.core.Frame
 import com.google.ar.core.Session
 import com.google.ar.core.TrackingState
-import com.google.ar.core.exceptions.ArCoreNotInstalledException
 import com.google.ar.core.exceptions.CameraNotAvailableException
-import com.google.ar.core.exceptions.UnavailableApkTooOldException
-import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException
-import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException
-import com.google.ar.core.exceptions.UnavailableSdkTooOldException
-import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -124,12 +118,12 @@ class MainActivity : Activity() {
                 }
                 ArCoreApk.InstallStatus.INSTALLED -> Unit
             }
-            if (session == null) session = Session(this)
-            val config = Config(session)
-            depthSupported = session!!.isDepthModeSupported(Config.DepthMode.AUTOMATIC)
+            val activeSession = session ?: Session(this).also { session = it }
+            val config = Config(activeSession)
+            depthSupported = activeSession.isDepthModeSupported(Config.DepthMode.AUTOMATIC)
             if (depthSupported) config.depthMode = Config.DepthMode.AUTOMATIC
-            session!!.configure(config)
-            renderer.setSession(session!!)
+            activeSession.configure(config)
+            renderer.setSession(activeSession)
             glView.onResume()
             session!!.resume()
             status.text = if (depthSupported) {
