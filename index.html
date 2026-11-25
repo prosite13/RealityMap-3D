@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d1117"><meta name="description" content="RealityMap 3D — 모바일 공간 촬영 및 로컬 프로젝트 관리">
+<title>RealityMap 3D</title>
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--panel2:#1c232d;--line:#303946;--text:#f0f6fc;--muted:#9aa7b5;--green:#39d353;--orange:#ff9b45;--red:#ff6b6b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Noto Sans KR",sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:12px;padding:11px 14px;background:var(--panel2);color:var(--text)}button:disabled{opacity:.45;cursor:not-allowed}
+.primary{background:var(--green);border-color:var(--green);color:#07120a;font-weight:800}.danger{color:#ff9b9b}.muted{color:var(--muted)}.small{font-size:12px}.hidden{display:none!important}
+header{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#0d1117ed;backdrop-filter:blur(12px);z-index:5}
+.brand{font-weight:900;letter-spacing:.7px}.brand b{color:var(--green)}.status{font-size:11px;color:var(--green);border:1px solid #286c3b;border-radius:20px;padding:4px 9px}
+main{max-width:1050px;margin:auto;padding:18px 16px 100px}.hero{padding:18px 2px 12px}.hero h1{font-size:27px;margin:0 0 5px}.hero p{color:var(--muted);margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}.stat,.panel,.room,.project{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}.stat strong{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
+.nav{display:flex;gap:8px;overflow:auto;padding:3px 0 15px;position:sticky;top:64px;background:var(--bg);z-index:4}.nav button{white-space:nowrap}.nav button.active{border-color:var(--green);color:var(--green);background:#12251a}
+section{display:none}section.active{display:block}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 14px}.section-head h2{font-size:19px;margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.project h3,.room h3{margin:0 0 5px}.project p,.room p{margin:0 0 12px;color:var(--muted);font-size:13px}
+input,select{background:#0d1117;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:12px;width:100%;min-width:0}
+.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}.field{margin:10px 0}.field label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
+.camera-wrap{background:#05080b;border-radius:16px;overflow:hidden;position:relative;min-height:230px;border:1px solid var(--line)}video{width:100%;max-height:58vh;min-height:230px;object-fit:cover;display:block}.camera-empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--muted)}
+.camera-controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.camera-controls button{flex:1}
+.tip{background:#17251c;border:1px solid #285b37;color:#c9f7d1;padding:12px;border-radius:12px;margin:10px 0;font-size:13px}
+.photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.photo{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}.photo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}.photo .meta{padding:8px;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;gap:6px}
+.viewer{height:300px;border:1px solid var(--line);border-radius:16px;background:radial-gradient(ellipse at center,#1c2b37,#080c11 70%);display:grid;place-items:center;text-align:center;color:var(--muted);padding:20px}
+.check{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #28313c}.check input{width:auto;margin-top:4px;accent-color:var(--green)}
+footer{position:fixed;bottom:0;left:0;right:0;background:#0d1117ed;border-top:1px solid var(--line);padding:9px 12px calc(9px + env(safe-area-inset-bottom));display:flex;justify-content:center;z-index:6}footer span{font-size:11px;color:var(--muted)}
+.toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:#263342;border:1px solid #526274;padding:10px 14px;border-radius:12px;z-index:20;max-width:90%;text-align:center}
+@media(min-width:700px){.photos{grid-template-columns:repeat(4,minmax(0,1fr))}.camera-layout{display:grid;grid-template-columns:1.4fr .8fr;gap:14px}.camera-side{align-self:start}}
+</style>
+</head>
+<body>
+<header><div class="brand">REALITYMAP <b>3D</b></div><span class="status">LOCAL WORKSPACE</span></header>
+<main>
+<div class="hero"><h1>공간을 기록하고, 현실을 맵으로.</h1><p>모바일 공간 촬영과 프로젝트 관리 워크스페이스</p></div>
+<div class="stats"><div class="stat"><strong id="statProjects">0</strong><span>프로젝트</span></div><div class="stat"><strong id="statRooms">0</strong><span>공간 / 방</span></div><div class="stat"><strong id="statPhotos">0</strong><span>촬영 사진</span></div></div>
+<nav class="nav">
+<button class="active" data-tab="home">대시보드</button><button data-tab="capture">촬영 스튜디오</button><button data-tab="projects">프로젝트</button><button data-tab="viewer">3D 뷰어</button><button data-tab="measure">측정 도구</button>
+</nav>
+<section id="home" class="active">
+<div class="section-head"><h2>빠른 시작</h2><button class="primary" id="quickProject">＋ 새 프로젝트</button></div>
+<div class="grid">
+<div class="panel"><h3>📷 공간 촬영</h3><p class="muted small">후면 카메라로 공간 사진을 기록합니다.</p><button class="primary" data-go="capture">촬영 시작</button></div>
+<div class="panel"><h3>🗂 프로젝트 관리</h3><p class="muted small">프로젝트와 방별 촬영 자료를 관리합니다.</p><button data-go="projects">프로젝트 열기</button></div>
+<div class="panel"><h3>🧊 3D 모델 확인</h3><p class="muted small">지원되는 3D 파일을 브라우저에서 확인할 수 있습니다.</p><button data-go="viewer">3D 뷰어 열기</button></div>
+</div>
+<div class="section-head" style="margin-top:24px"><h2>최근 프로젝트</h2><button data-go="projects">전체 보기</button></div><div id="recentProjects" class="grid"></div>
+<div class="tip">현재 버전은 촬영·로컬 자료 관리 웹앱입니다. 사진을 자동으로 3D Gaussian Splatting 장면으로 변환하는 엔진은 아직 연결되지 않았습니다.</div>
+</section>
+<section id="projects">
+<div class="section-head"><h2>프로젝트</h2><button class="primary" id="newProject">＋ 만들기</button></div>
+<div id="projectList" class="grid"></div>
+</section>
+<section id="capture">
+<div class="section-head"><h2>촬영 스튜디오</h2><span class="muted small" id="captureTarget">프로젝트 미선택</span></div>
+<div class="field"><label>촬영 프로젝트 / 방</label><select id="roomSelect"></select></div>
+<div class="row"><button id="guidedBtn" class="primary">안내 촬영</button><button id="freeBtn">자유 촬영</button></div>
+<div class="tip" id="captureTip">공간 전체가 보이도록 천천히 이동하며 여러 방향에서 촬영하세요. 사진 사이에 충분한 겹침이 있도록 합니다.</div>
+<div class="camera-layout">
+<div><div class="camera-wrap"><video id="video" autoplay playsinline muted></video><div class="camera-empty" id="cameraEmpty">카메라를 시작하려면 아래 버튼을 누르세요.</div></div>
+<div class="camera-controls"><button class="primary" id="startCamera">카메라 시작</button><button id="switchCamera">카메라 전환</button><button id="takePhoto" disabled>사진 촬영</button><button id="stopCamera">중지</button></div></div>
+<div class="camera-side panel"><h3>촬영 체크리스트</h3><label class="check"><input type="checkbox"> 방 입구와 전체 구조</label><label class="check"><input type="checkbox"> 각 벽면과 모서리</label><label class="check"><input type="checkbox"> 창문과 문 주변</label><label class="check"><input type="checkbox"> 가구와 주요 물체</label><label class="check"><input type="checkbox"> 바닥과 천장 방향</label><p class="muted small">팁: 빠르게 회전하거나 피사체가 흐릿해지지 않도록 천천히 촬영하세요.</p></div>
+</div>
+<div class="section-head"><h2>촬영 이미지</h2><span class="muted small" id="photoCount">0장</span></div><div class="photos" id="photoGrid"></div>
+</section>
+<section id="viewer">
+<div class="section-head"><h2>3D 뷰어</h2><label class="small">GLB / GLTF / PLY 파일</label></div>
+<div class="viewer" id="viewerBox">3D 모델을 불러오면 이 영역에 표시됩니다.<br><span class="small">현재 프로젝트의 사진은 자동으로 3D 모델이 되지 않습니다.</span></div>
+<div class="field"><input type="file" id="modelFile" accept=".glb,.gltf,.ply,.obj"></div>
+<p class="muted small" id="modelInfo">지원 형식: GLB, GLTF, PLY, OBJ. 뷰어 엔진은 이 페이지에 포함되지 않은 모델은 미리보기만 제공하지 못할 수 있습니다.</p>
+</section>
+<section id="measure">
+<div class="section-head"><h2>측정 도구</h2></div>
+<div class="panel"><h3>기준 길이 기반 계산기</h3><p class="muted small">사진이나 3D 모델에서 자동 측정하는 기능이 아닙니다. 직접 입력한 실제 치수로 계산합니다.</p>
+<div class="field"><label>기준 실제 길이 (cm)</label><input id="realLength" type="number" min="0" step="0.1" placeholder="예: 100"></div>
+<div class="field"><label>기준 이미지 길이 (px)</label><input id="pixelLength" type="number" min="0" step="0.1" placeholder="예: 250"></div>
+<div class="field"><label>측정할 이미지 길이 (px)</label><input id="measurePixels" type="number" min="0" step="0.1" placeholder="예: 125"></div>
+<button class="primary" id="calculate">길이 계산</button><h2 id="measureResult" class="green"></h2></div>
+<div class="tip">정확한 3D 거리·높이·면적 측정에는 카메라 자세, 깊이 정보, 스케일 보정이 포함된 복원 Geometry가 필요합니다.</div>
+</section>
+</main>
+<footer><span>RealityMap 3D · 브라우저 로컬 저장 · 카메라 권한은 HTTPS에서 필요</span></footer>
+<div id="toast" class="toast hidden"></div>
+<script>
+const DB_NAME='realitymap3d', DB_VERSION=1; let db, stream=null, facing='environment', mode='guided', activeProjectId=null;
+const $=id=>document.getElementById(id);
+function notify(msg){$('toast').textContent=msg;$('toast').classList.remove('hidden');setTimeout(()=>$('toast').classList.add('hidden'),2600)}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function openDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('projects'))d.createObjectStore('projects',{keyPath:'id'});if(!d.objectStoreNames.contains('photos')){const s=d.createObjectStore('photos',{keyPath:'id'});s.createIndex('projectId','projectId');s.createIndex('roomId','roomId')}};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+function req(store,method,value){return new Promise((resolve,reject)=>{const tx=db.transaction(store,method==='getAll'?'readonly':'readwrite');const s=tx.objectStore(store);let r=method==='getAll'?s.getAll():method==='get'?s.get(value):method==='put'?s.put(value):s.delete(value);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+async function allProjects(){return (await req('projects','getAll')).sort((a,b)=>b.updated-a.updated)}
+async function allPhotos(){return await req('photos','getAll')}
+async function saveProject(p){p.updated=Date.now();await req('projects','put',p);await renderAll()}
+function currentProject(projects){return projects.find(p=>p.id===activeProjectId)||projects[0]||null}
+async function ensureProject(){let ps=await allProjects();if(!ps.length){const p={id:uid(),name:'내 첫 공간',rooms:[{id:uid(),name:'거실'}],created:Date.now(),updated:Date.now()};await req('projects','put',p);ps=[p]}activeProjectId=activeProjectId||ps[0].id;return currentProject(ps)}
+async function renderAll(){const ps=await allProjects(), photos=await allPhotos();$('statProjects').textContent=ps.length;$('statRooms').textContent=ps.reduce((n,p)=>n+p.rooms.length,0);$('statPhotos').textContent=photos.length;
+$('projectList').innerHTML=ps.map(p=>projectCard(p,photos)).join('')||'<p class="muted">프로젝트가 없습니다.</p>';
+$('recentProjects').innerHTML=ps.slice(0,3).map(p=>projectCard(p,photos)).join('')||'<p class="muted">새 프로젝트를 만들어 시작하세요.</p>';
+document.querySelectorAll('[data-open-project]').forEach(b=>b.onclick=()=>{activeProjectId=b.dataset.openProject;go('capture');refreshRoomSelect()});
+await refreshRoomSelect();await renderPhotos()}
+function projectCard(p,photos){const count=photos.filter(x=>x.projectId===p.id).length;return '<div class="project"><h3>'+esc(p.name)+'</h3><p>'+p.rooms.length+'개 공간 · '+count+'장 촬영</p><div class="row"><button data-open-project="'+p.id+'">열기 / 촬영</button><button data-add-room="'+p.id+'">방 추가</button></div></div>'}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function createProject(){const name=prompt('프로젝트 이름을 입력하세요.');if(!name?.trim())return;const p={id:uid(),name:name.trim(),rooms:[{id:uid(),name:'첫 번째 방'}],created:Date.now(),updated:Date.now()};await req('projects','put',p);activeProjectId=p.id;await renderAll();notify('프로젝트를 만들었습니다.')}
+async function addRoom(id){const p=await req('projects','get',id);const name=prompt('방 이름을 입력하세요.');if(!name?.trim())return;p.rooms.push({id:uid(),name:name.trim()});await saveProject(p);notify('방을 추가했습니다.')}
+async function refreshRoomSelect(){const ps=await allProjects(),p=currentProject(ps);if(!p){$('roomSelect').innerHTML='';return}activeProjectId=p.id;$('captureTarget').textContent=p.name;$('roomSelect').innerHTML=p.rooms.map(r=>'<option value="'+r.id+'">'+esc(r.name)+'</option>').join('')}
+async function renderPhotos(){const ps=await allPhotos(),p=await req('projects','get',activeProjectId);const roomId=$('roomSelect').value;const list=ps.filter(x=>x.projectId===activeProjectId&&(!roomId||x.roomId===roomId)).sort((a,b)=>b.created-a.created);$('photoCount').textContent=list.length+'장';$('photoGrid').innerHTML=list.map(x=>'<div class="photo"><img src="'+URL.createObjectURL(x.blob)+'" alt="촬영 사진"><div class="meta"><span>'+new Date(x.created).toLocaleString()+'</span><button class="danger small" data-delete-photo="'+x.id+'">삭제</button></div></div>').join('')||'<p class="muted small">아직 촬영한 사진이 없습니다.</p>';document.querySelectorAll('[data-delete-photo]').forEach(b=>b.onclick=async()=>{await req('photos','delete',b.dataset.deletePhoto);await renderAll();notify('사진을 삭제했습니다.')})}
+async function startCamera(){if(!navigator.mediaDevices?.getUserMedia){notify('이 브라우저는 카메라 API를 지원하지 않습니다. HTTPS 주소로 접속하세요.');return}try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080}}});$('video').srcObject=stream;$('cameraEmpty').classList.add('hidden');$('takePhoto').disabled=false;notify('카메라가 시작됐습니다.')}catch(e){notify('카메라 권한 또는 기기 설정을 확인하세요: '+e.message)}}
+function stopCamera(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}$('video').srcObject=null;$('cameraEmpty').classList.remove('hidden');$('takePhoto').disabled=true}
+async function takePhoto(){const v=$('video');if(!v.videoWidth){notify('카메라가 준비되지 않았습니다.');return}const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.92));const project=await req('projects','get',activeProjectId);if(!project){notify('프로젝트를 먼저 만드세요.');return}const item={id:uid(),projectId:project.id,roomId:$('roomSelect').value||project.rooms[0].id,blob,created:Date.now(),mode};await req('photos','put',item);await renderAll();notify('사진을 기기에 저장했습니다.')}
+function go(tab){document.querySelectorAll('section').forEach(s=>s.classList.toggle('active',s.id===tab));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));if(tab==='capture')renderPhotos()}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+$('newProject').onclick=createProject;$('quickProject').onclick=createProject;$('roomSelect').onchange=renderPhotos;
+document.addEventListener('click',e=>{const b=e.target.closest('[data-add-room]');if(b)addRoom(b.dataset.addRoom)});
+$('startCamera').onclick=startCamera;$('stopCamera').onclick=stopCamera;$('takePhoto').onclick=takePhoto;$('switchCamera').onclick=async()=>{facing=facing==='environment'?'user':'environment';if(stream){stopCamera();await startCamera()}};
+$('guidedBtn').onclick=()=>{mode='guided';$('guidedBtn').classList.add('primary');$('freeBtn').classList.remove('primary');$('captureTip').textContent='안내 촬영: 입구 → 벽면 → 모서리 → 가구 → 바닥·천장 순서로 천천히 촬영하세요.'};
+$('freeBtn').onclick=()=>{mode='free';$('freeBtn').classList.add('primary');$('guidedBtn').classList.remove('primary');$('captureTip').textContent='자유 촬영: 원하는 위치와 방향에서 자유롭게 사진을 기록합니다.'};
+$('calculate').onclick=()=>{const a=+$('realLength').value,b=+$('pixelLength').value,c=+$('measurePixels').value;if(a<=0||b<=0||c<=0){$('measureResult').textContent='세 값을 모두 양수로 입력하세요.';return}$('measureResult').textContent='계산 결과: '+(a*c/b).toFixed(2)+' cm'};
+$('modelFile').onchange=()=>{const f=$('modelFile').files[0];if(!f)return;$('viewerBox').innerHTML='<strong>'+esc(f.name)+'</strong><br><span class="small">파일이 선택되었습니다. 이 버전은 모델 파일을 실제 3D로 렌더링하지 않습니다. Three.js 기반 뷰어 연결이 다음 개발 단계입니다.</span>';$('modelInfo').textContent='파일 크기: '+(f.size/1024/1024).toFixed(2)+' MB'};
+window.addEventListener('beforeunload',stopCamera);
+(async()=>{try{db=await openDB();await ensureProject();await renderAll()}catch(e){notify('로컬 저장소를 열 수 없습니다: '+e.message)}})();
+</script>
+</body></html>
