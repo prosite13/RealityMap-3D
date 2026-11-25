@@ -97,7 +97,7 @@ class MainActivity : Activity() {
         setContentView(root)
         status.text = deviceReport()
         if (hasCameraPermission()) startCamera() else
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO), requestCamera)
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), requestCamera)
     }
 
     private fun hasCameraPermission() =
