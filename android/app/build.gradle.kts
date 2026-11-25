@@ -29,4 +29,5 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:$camerax")
     implementation("androidx.camera:camera-view:$camerax")
     implementation("androidx.camera:camera-video:$camerax")
+    implementation("com.google.ar:core:1.52.0")
 }
