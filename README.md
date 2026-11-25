@@ -18,3 +18,13 @@
 ## 배포
 GitHub Actions workflow가 main 브랜치 변경 시 GitHub Pages로 배포합니다.
 https://prosite13.github.io/RealityMap-3D/
+
+
+## Android 네이티브 앱 (초기 검증 단계)
+
+`android/` 폴더에 CameraX 미리보기와 기기 진단용 Android 앱 프로젝트를 추가했습니다. GitHub Actions의 **Android APK** 워크플로가 Debug APK 빌드를 시도합니다.
+
+현재 네이티브 앱은 카메라 미리보기, 센서 유무, 메모리, Vulkan feature flag를 표시하는 호환성 조사 단계입니다. 이것은 SLAM/ARCore Depth/3D Gaussian Splatting 구현이 아닙니다. 실제 기기에서 앱을 설치해 진단 결과를 수집한 뒤 해당 기기에 맞는 추적·깊이·재구성 엔진을 선택해야 합니다.
+
+- APK 빌드 기록: https://github.com/prosite13/RealityMap-3D/actions/workflows/android-apk.yml
+- Android 프로젝트 경로: `android/`
