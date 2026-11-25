@@ -1,122 +1,56 @@
 <!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0d1117"><meta name="description" content="RealityMap 3D — 모바일 공간 촬영 및 로컬 프로젝트 관리">
-<title>RealityMap 3D</title>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0d1117"><title>RealityMap 3D</title>
 <style>
-:root{--bg:#0d1117;--panel:#161b22;--panel2:#1c232d;--line:#303946;--text:#f0f6fc;--muted:#9aa7b5;--green:#39d353;--orange:#ff9b45;--red:#ff6b6b}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Noto Sans KR",sans-serif}
-button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:12px;padding:11px 14px;background:var(--panel2);color:var(--text)}button:disabled{opacity:.45;cursor:not-allowed}
-.primary{background:var(--green);border-color:var(--green);color:#07120a;font-weight:800}.danger{color:#ff9b9b}.muted{color:var(--muted)}.small{font-size:12px}.hidden{display:none!important}
-header{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#0d1117ed;backdrop-filter:blur(12px);z-index:5}
-.brand{font-weight:900;letter-spacing:.7px}.brand b{color:var(--green)}.status{font-size:11px;color:var(--green);border:1px solid #286c3b;border-radius:20px;padding:4px 9px}
-main{max-width:1050px;margin:auto;padding:18px 16px 100px}.hero{padding:18px 2px 12px}.hero h1{font-size:27px;margin:0 0 5px}.hero p{color:var(--muted);margin:0}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}.stat,.panel,.room,.project{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}.stat strong{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
-.nav{display:flex;gap:8px;overflow:auto;padding:3px 0 15px;position:sticky;top:64px;background:var(--bg);z-index:4}.nav button{white-space:nowrap}.nav button.active{border-color:var(--green);color:var(--green);background:#12251a}
-section{display:none}section.active{display:block}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 14px}.section-head h2{font-size:19px;margin:0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.project h3,.room h3{margin:0 0 5px}.project p,.room p{margin:0 0 12px;color:var(--muted);font-size:13px}
-input,select{background:#0d1117;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:12px;width:100%;min-width:0}
-.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}.field{margin:10px 0}.field label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
-.camera-wrap{background:#05080b;border-radius:16px;overflow:hidden;position:relative;min-height:230px;border:1px solid var(--line)}video{width:100%;max-height:58vh;min-height:230px;object-fit:cover;display:block}.camera-empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--muted)}
-.camera-controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.camera-controls button{flex:1}
-.tip{background:#17251c;border:1px solid #285b37;color:#c9f7d1;padding:12px;border-radius:12px;margin:10px 0;font-size:13px}
-.photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.photo{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}.photo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}.photo .meta{padding:8px;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;gap:6px}
-.viewer{height:300px;border:1px solid var(--line);border-radius:16px;background:radial-gradient(ellipse at center,#1c2b37,#080c11 70%);display:grid;place-items:center;text-align:center;color:var(--muted);padding:20px}
-.check{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #28313c}.check input{width:auto;margin-top:4px;accent-color:var(--green)}
-footer{position:fixed;bottom:0;left:0;right:0;background:#0d1117ed;border-top:1px solid var(--line);padding:9px 12px calc(9px + env(safe-area-inset-bottom));display:flex;justify-content:center;z-index:6}footer span{font-size:11px;color:var(--muted)}
-.toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:#263342;border:1px solid #526274;padding:10px 14px;border-radius:12px;z-index:20;max-width:90%;text-align:center}
-@media(min-width:700px){.photos{grid-template-columns:repeat(4,minmax(0,1fr))}.camera-layout{display:grid;grid-template-columns:1.4fr .8fr;gap:14px}.camera-side{align-self:start}}
-</style>
-</head>
-<body>
-<header><div class="brand">REALITYMAP <b>3D</b></div><span class="status">LOCAL WORKSPACE</span></header>
-<main>
-<div class="hero"><h1>공간을 기록하고, 현실을 맵으로.</h1><p>모바일 공간 촬영과 프로젝트 관리 워크스페이스</p></div>
-<div class="stats"><div class="stat"><strong id="statProjects">0</strong><span>프로젝트</span></div><div class="stat"><strong id="statRooms">0</strong><span>공간 / 방</span></div><div class="stat"><strong id="statPhotos">0</strong><span>촬영 사진</span></div></div>
-<nav class="nav">
-<button class="active" data-tab="home">대시보드</button><button data-tab="capture">촬영 스튜디오</button><button data-tab="projects">프로젝트</button><button data-tab="viewer">3D 뷰어</button><button data-tab="measure">측정 도구</button>
-</nav>
-<section id="home" class="active">
-<div class="section-head"><h2>빠른 시작</h2><button class="primary" id="quickProject">＋ 새 프로젝트</button></div>
-<div class="grid">
-<div class="panel"><h3>📷 공간 촬영</h3><p class="muted small">후면 카메라로 공간 사진을 기록합니다.</p><button class="primary" data-go="capture">촬영 시작</button></div>
-<div class="panel"><h3>🗂 프로젝트 관리</h3><p class="muted small">프로젝트와 방별 촬영 자료를 관리합니다.</p><button data-go="projects">프로젝트 열기</button></div>
-<div class="panel"><h3>🧊 3D 모델 확인</h3><p class="muted small">지원되는 3D 파일을 브라우저에서 확인할 수 있습니다.</p><button data-go="viewer">3D 뷰어 열기</button></div>
+:root{--bg:#0d1117;--p:#161b22;--p2:#202936;--line:#303946;--tx:#f0f6fc;--muted:#9aa7b5;--green:#39d353;--orange:#ff9b45;--blue:#52a8ff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,sans-serif}button,input,select{font:inherit}button{border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:var(--p2);color:var(--tx);cursor:pointer}.primary{background:var(--green);color:#07120a;border-color:var(--green);font-weight:800}button:disabled{opacity:.4}header{position:sticky;top:0;z-index:9;background:#0d1117ed;border-bottom:1px solid var(--line);padding:14px 17px;display:flex;justify-content:space-between}.brand{font-weight:900;letter-spacing:.6px}.brand b{color:var(--green)}main{max-width:980px;margin:auto;padding:16px 14px 90px}.muted{color:var(--muted)}.small{font-size:12px}.tabs{display:flex;gap:7px;overflow:auto;margin:14px 0}.tabs button{white-space:nowrap}.tabs .on{border-color:var(--green);color:var(--green)}section{display:none}section.on{display:block}.panel{background:var(--p);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}.row{display:flex;gap:8px;align-items:center}.row>*{flex:1;min-width:0}.field{margin:10px 0}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}input,select{width:100%;background:#0d1117;border:1px solid var(--line);border-radius:10px;color:var(--tx);padding:11px}.camera{position:relative;background:#030609;border:1px solid var(--line);border-radius:16px;overflow:hidden;min-height:250px}video{display:block;width:100%;max-height:52vh;min-height:250px;object-fit:cover}.aim{position:absolute;inset:12% 10%;border:2px solid #39d353;border-radius:12px;pointer-events:none;box-shadow:0 0 0 999px #0005}.aim:before,.aim:after{content:"";position:absolute;background:#39d353}.aim:before{width:1px;height:100%;left:50%;opacity:.65}.aim:after{height:1px;width:100%;top:50%;opacity:.65}.corner{position:absolute;width:24px;height:24px;border-color:#fff;border-style:solid}.tl{top:-2px;left:-2px;border-width:3px 0 0 3px}.tr{top:-2px;right:-2px;border-width:3px 3px 0 0}.bl{bottom:-2px;left:-2px;border-width:0 0 3px 3px}.br{bottom:-2px;right:-2px;border-width:0 3px 3px 0}.aim-label{position:absolute;top:7px;left:50%;transform:translateX(-50%);background:#07120add;color:#b9ffca;padding:4px 8px;border-radius:6px;font-size:11px;white-space:nowrap}.camera-msg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--muted);padding:20px}.controls{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.controls button{width:100%}.coverage{background:#080d14;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:12px}.coverage canvas{width:100%;height:230px;display:block}.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;background:var(--green)}.dot.empty{background:#394554}.bar{height:8px;background:#293340;border-radius:20px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--green);width:0}.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:9px}.card{background:var(--p);border:1px solid var(--line);padding:13px;border-radius:13px;margin:8px 0}.warn{border:1px solid #76522a;background:#2b2116;color:#ffd7a3;padding:11px;border-radius:12px;font-size:12px;margin:10px 0}.good{color:var(--green)}footer{position:fixed;bottom:0;left:0;right:0;background:#0d1117ed;border-top:1px solid var(--line);text-align:center;padding:10px;font-size:11px;color:var(--muted)}@media(min-width:760px){.capturegrid{display:grid;grid-template-columns:1.3fr .8fr;gap:14px}.photos{grid-template-columns:repeat(5,1fr)}}
+</style></head><body>
+<header><div class="brand">REALITYMAP <b>3D</b></div><span class="small good">LOCAL CAPTURE</span></header>
+<main><h2 style="margin:4px 0">공간을 촬영하고 3D로 복원하기</h2><p class="muted small" style="margin-top:0">촬영 가이드 · 커버리지 확인 · 로컬 프로젝트</p>
+<nav class="tabs"><button class="on" data-tab="capture">촬영</button><button data-tab="projects">프로젝트</button><button data-tab="restore">3D 만들기</button></nav>
+<section id="capture" class="on">
+<div class="field"><label>프로젝트 / 방</label><select id="room"></select></div>
+<div class="row"><button id="guided" class="primary">네모 가이드 촬영</button><button id="free">자유 촬영</button></div>
+<div class="capturegrid"><div>
+<div class="camera"><video id="video" autoplay muted playsinline></video><div id="msg" class="camera-msg">카메라 시작을 누르세요.</div><div class="aim" id="aim"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><span class="aim-label" id="aimLabel">이 영역을 천천히 촬영하세요</span></div></div>
+<div class="controls"><button class="primary" id="start">카메라 시작</button><button id="snap" disabled>사진 촬영</button><button id="record">영상 촬영 시작</button><button id="stop">카메라 중지</button></div>
+<div class="row"><button id="switch">전면 / 후면 전환</button><button id="nextTarget">다음 촬영 영역</button></div>
 </div>
-<div class="section-head" style="margin-top:24px"><h2>최근 프로젝트</h2><button data-go="projects">전체 보기</button></div><div id="recentProjects" class="grid"></div>
-<div class="tip">현재 버전은 촬영·로컬 자료 관리 웹앱입니다. 사진을 자동으로 3D Gaussian Splatting 장면으로 변환하는 엔진은 아직 연결되지 않았습니다.</div>
+<div>
+<div class="coverage"><b>실시간 촬영 커버리지</b><canvas id="map" width="600" height="380"></canvas><div class="legend"><span><i class="dot"></i>촬영한 방향</span><span><i class="dot empty"></i>미촬영 방향</span></div><div class="bar"><i id="progress"></i></div><div class="small muted" id="coverageText">카메라를 켜고 방 안을 천천히 둘러보세요. 방향별 촬영 범위를 기록합니다.</div></div>
+<div class="panel"><b>촬영 순서</b><div class="small muted" id="steps">① 정면 벽　② 왼쪽 벽　③ 오른쪽 벽　④ 뒤쪽 벽　⑤ 바닥·천장</div><p class="small muted">네모 박스는 촬영 구도를 맞추는 가이드입니다. 박스 안에 벽·가구가 들어오도록 이동하세요.</p></div>
+</div></div>
+<div class="panel"><div class="row"><b>촬영 사진</b><span class="muted small" id="photoCount">0장</span></div><div id="photos" class="photos"></div></div>
 </section>
-<section id="projects">
-<div class="section-head"><h2>프로젝트</h2><button class="primary" id="newProject">＋ 만들기</button></div>
-<div id="projectList" class="grid"></div>
-</section>
-<section id="capture">
-<div class="section-head"><h2>촬영 스튜디오</h2><span class="muted small" id="captureTarget">프로젝트 미선택</span></div>
-<div class="field"><label>촬영 프로젝트 / 방</label><select id="roomSelect"></select></div>
-<div class="row"><button id="guidedBtn" class="primary">안내 촬영</button><button id="freeBtn">자유 촬영</button></div>
-<div class="tip" id="captureTip">공간 전체가 보이도록 천천히 이동하며 여러 방향에서 촬영하세요. 사진 사이에 충분한 겹침이 있도록 합니다.</div>
-<div class="camera-layout">
-<div><div class="camera-wrap"><video id="video" autoplay playsinline muted></video><div class="camera-empty" id="cameraEmpty">카메라를 시작하려면 아래 버튼을 누르세요.</div></div>
-<div class="camera-controls"><button class="primary" id="startCamera">카메라 시작</button><button id="switchCamera">카메라 전환</button><button id="takePhoto" disabled>사진 촬영</button><button id="stopCamera">중지</button></div></div>
-<div class="camera-side panel"><h3>촬영 체크리스트</h3><label class="check"><input type="checkbox"> 방 입구와 전체 구조</label><label class="check"><input type="checkbox"> 각 벽면과 모서리</label><label class="check"><input type="checkbox"> 창문과 문 주변</label><label class="check"><input type="checkbox"> 가구와 주요 물체</label><label class="check"><input type="checkbox"> 바닥과 천장 방향</label><p class="muted small">팁: 빠르게 회전하거나 피사체가 흐릿해지지 않도록 천천히 촬영하세요.</p></div>
-</div>
-<div class="section-head"><h2>촬영 이미지</h2><span class="muted small" id="photoCount">0장</span></div><div class="photos" id="photoGrid"></div>
-</section>
-<section id="viewer">
-<div class="section-head"><h2>3D 뷰어</h2><label class="small">GLB / GLTF / PLY 파일</label></div>
-<div class="viewer" id="viewerBox">3D 모델을 불러오면 이 영역에 표시됩니다.<br><span class="small">현재 프로젝트의 사진은 자동으로 3D 모델이 되지 않습니다.</span></div>
-<div class="field"><input type="file" id="modelFile" accept=".glb,.gltf,.ply,.obj"></div>
-<p class="muted small" id="modelInfo">지원 형식: GLB, GLTF, PLY, OBJ. 뷰어 엔진은 이 페이지에 포함되지 않은 모델은 미리보기만 제공하지 못할 수 있습니다.</p>
-</section>
-<section id="measure">
-<div class="section-head"><h2>측정 도구</h2></div>
-<div class="panel"><h3>기준 길이 기반 계산기</h3><p class="muted small">사진이나 3D 모델에서 자동 측정하는 기능이 아닙니다. 직접 입력한 실제 치수로 계산합니다.</p>
-<div class="field"><label>기준 실제 길이 (cm)</label><input id="realLength" type="number" min="0" step="0.1" placeholder="예: 100"></div>
-<div class="field"><label>기준 이미지 길이 (px)</label><input id="pixelLength" type="number" min="0" step="0.1" placeholder="예: 250"></div>
-<div class="field"><label>측정할 이미지 길이 (px)</label><input id="measurePixels" type="number" min="0" step="0.1" placeholder="예: 125"></div>
-<button class="primary" id="calculate">길이 계산</button><h2 id="measureResult" class="green"></h2></div>
-<div class="tip">정확한 3D 거리·높이·면적 측정에는 카메라 자세, 깊이 정보, 스케일 보정이 포함된 복원 Geometry가 필요합니다.</div>
-</section>
-</main>
-<footer><span>RealityMap 3D · 브라우저 로컬 저장 · 카메라 권한은 HTTPS에서 필요</span></footer>
-<div id="toast" class="toast hidden"></div>
+<section id="projects"><div class="row"><h3>내 프로젝트</h3><button class="primary" id="newProject">＋ 새 프로젝트</button></div><div id="projectList"></div></section>
+<section id="restore"><h3>사진으로 3D 만들기</h3><div class="panel"><div class="row"><span>선택한 방 사진</span><b id="restoreCount">0장</b></div><p class="muted small">촬영한 사진을 바탕으로 복원 작업을 준비합니다.</p><button class="primary" id="make3d" style="width:100%">3D 복원 시작</button><div id="restoreStatus" class="small muted" style="margin-top:12px">사진을 최소 20~30장 이상, 서로 겹치도록 촬영하는 것을 권장합니다.</div></div>
+<div class="warn">정직한 기능 안내: 현재 웹 버전에는 SfM/깊이 추정/3D Gaussian Splatting 복원 엔진이 아직 탑재되지 않았습니다. 이 버튼은 사진 세트와 복원 작업 정보를 준비하지만, 실제 3D 모델을 생성했다고 표시하지 않습니다. 실제 복원은 Android 네이티브 엔진 연결 후 가능합니다.</div>
+<div class="panel"><b>실시간 화면의 의미</b><p class="small muted">아래 커버리지 맵은 카메라 방향 센서와 이동 변화를 이용해 어느 방향을 촬영했는지 보여주는 안내 지도입니다. 실제 깊이·표면이 복원되어 채워진 3D 메시는 아닙니다.</p></div></section>
+</main><footer>사진과 프로젝트는 이 브라우저의 기기에 저장됩니다. 카메라는 HTTPS 권한이 필요합니다.</footer>
 <script>
-const DB_NAME='realitymap3d', DB_VERSION=1; let db, stream=null, facing='environment', mode='guided', activeProjectId=null;
+const DB='rmap-v2';let db,stream=null,recorder=null,chunks=[],facing='environment',mode='guided',target=0,projectId='home',roomId='room1',photos=[],coverage=new Set(),lastOrientation=null,raf=0;
 const $=id=>document.getElementById(id);
-function notify(msg){$('toast').textContent=msg;$('toast').classList.remove('hidden');setTimeout(()=>$('toast').classList.add('hidden'),2600)}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
-function openDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('projects'))d.createObjectStore('projects',{keyPath:'id'});if(!d.objectStoreNames.contains('photos')){const s=d.createObjectStore('photos',{keyPath:'id'});s.createIndex('projectId','projectId');s.createIndex('roomId','roomId')}};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
-function req(store,method,value){return new Promise((resolve,reject)=>{const tx=db.transaction(store,method==='getAll'?'readonly':'readwrite');const s=tx.objectStore(store);let r=method==='getAll'?s.getAll():method==='get'?s.get(value):method==='put'?s.put(value):s.delete(value);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
-async function allProjects(){return (await req('projects','getAll')).sort((a,b)=>b.updated-a.updated)}
-async function allPhotos(){return await req('photos','getAll')}
-async function saveProject(p){p.updated=Date.now();await req('projects','put',p);await renderAll()}
-function currentProject(projects){return projects.find(p=>p.id===activeProjectId)||projects[0]||null}
-async function ensureProject(){let ps=await allProjects();if(!ps.length){const p={id:uid(),name:'내 첫 공간',rooms:[{id:uid(),name:'거실'}],created:Date.now(),updated:Date.now()};await req('projects','put',p);ps=[p]}activeProjectId=activeProjectId||ps[0].id;return currentProject(ps)}
-async function renderAll(){const ps=await allProjects(), photos=await allPhotos();$('statProjects').textContent=ps.length;$('statRooms').textContent=ps.reduce((n,p)=>n+p.rooms.length,0);$('statPhotos').textContent=photos.length;
-$('projectList').innerHTML=ps.map(p=>projectCard(p,photos)).join('')||'<p class="muted">프로젝트가 없습니다.</p>';
-$('recentProjects').innerHTML=ps.slice(0,3).map(p=>projectCard(p,photos)).join('')||'<p class="muted">새 프로젝트를 만들어 시작하세요.</p>';
-document.querySelectorAll('[data-open-project]').forEach(b=>b.onclick=()=>{activeProjectId=b.dataset.openProject;go('capture');refreshRoomSelect()});
-await refreshRoomSelect();await renderPhotos()}
-function projectCard(p,photos){const count=photos.filter(x=>x.projectId===p.id).length;return '<div class="project"><h3>'+esc(p.name)+'</h3><p>'+p.rooms.length+'개 공간 · '+count+'장 촬영</p><div class="row"><button data-open-project="'+p.id+'">열기 / 촬영</button><button data-add-room="'+p.id+'">방 추가</button></div></div>'}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function createProject(){const name=prompt('프로젝트 이름을 입력하세요.');if(!name?.trim())return;const p={id:uid(),name:name.trim(),rooms:[{id:uid(),name:'첫 번째 방'}],created:Date.now(),updated:Date.now()};await req('projects','put',p);activeProjectId=p.id;await renderAll();notify('프로젝트를 만들었습니다.')}
-async function addRoom(id){const p=await req('projects','get',id);const name=prompt('방 이름을 입력하세요.');if(!name?.trim())return;p.rooms.push({id:uid(),name:name.trim()});await saveProject(p);notify('방을 추가했습니다.')}
-async function refreshRoomSelect(){const ps=await allProjects(),p=currentProject(ps);if(!p){$('roomSelect').innerHTML='';return}activeProjectId=p.id;$('captureTarget').textContent=p.name;$('roomSelect').innerHTML=p.rooms.map(r=>'<option value="'+r.id+'">'+esc(r.name)+'</option>').join('')}
-async function renderPhotos(){const ps=await allPhotos(),p=await req('projects','get',activeProjectId);const roomId=$('roomSelect').value;const list=ps.filter(x=>x.projectId===activeProjectId&&(!roomId||x.roomId===roomId)).sort((a,b)=>b.created-a.created);$('photoCount').textContent=list.length+'장';$('photoGrid').innerHTML=list.map(x=>'<div class="photo"><img src="'+URL.createObjectURL(x.blob)+'" alt="촬영 사진"><div class="meta"><span>'+new Date(x.created).toLocaleString()+'</span><button class="danger small" data-delete-photo="'+x.id+'">삭제</button></div></div>').join('')||'<p class="muted small">아직 촬영한 사진이 없습니다.</p>';document.querySelectorAll('[data-delete-photo]').forEach(b=>b.onclick=async()=>{await req('photos','delete',b.dataset.deletePhoto);await renderAll();notify('사진을 삭제했습니다.')})}
-async function startCamera(){if(!navigator.mediaDevices?.getUserMedia){notify('이 브라우저는 카메라 API를 지원하지 않습니다. HTTPS 주소로 접속하세요.');return}try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080}}});$('video').srcObject=stream;$('cameraEmpty').classList.add('hidden');$('takePhoto').disabled=false;notify('카메라가 시작됐습니다.')}catch(e){notify('카메라 권한 또는 기기 설정을 확인하세요: '+e.message)}}
-function stopCamera(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}$('video').srcObject=null;$('cameraEmpty').classList.remove('hidden');$('takePhoto').disabled=true}
-async function takePhoto(){const v=$('video');if(!v.videoWidth){notify('카메라가 준비되지 않았습니다.');return}const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.92));const project=await req('projects','get',activeProjectId);if(!project){notify('프로젝트를 먼저 만드세요.');return}const item={id:uid(),projectId:project.id,roomId:$('roomSelect').value||project.rooms[0].id,blob,created:Date.now(),mode};await req('photos','put',item);await renderAll();notify('사진을 기기에 저장했습니다.')}
-function go(tab){document.querySelectorAll('section').forEach(s=>s.classList.toggle('active',s.id===tab));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));if(tab==='capture')renderPhotos()}
-document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
-$('newProject').onclick=createProject;$('quickProject').onclick=createProject;$('roomSelect').onchange=renderPhotos;
-document.addEventListener('click',e=>{const b=e.target.closest('[data-add-room]');if(b)addRoom(b.dataset.addRoom)});
-$('startCamera').onclick=startCamera;$('stopCamera').onclick=stopCamera;$('takePhoto').onclick=takePhoto;$('switchCamera').onclick=async()=>{facing=facing==='environment'?'user':'environment';if(stream){stopCamera();await startCamera()}};
-$('guidedBtn').onclick=()=>{mode='guided';$('guidedBtn').classList.add('primary');$('freeBtn').classList.remove('primary');$('captureTip').textContent='안내 촬영: 입구 → 벽면 → 모서리 → 가구 → 바닥·천장 순서로 천천히 촬영하세요.'};
-$('freeBtn').onclick=()=>{mode='free';$('freeBtn').classList.add('primary');$('guidedBtn').classList.remove('primary');$('captureTip').textContent='자유 촬영: 원하는 위치와 방향에서 자유롭게 사진을 기록합니다.'};
-$('calculate').onclick=()=>{const a=+$('realLength').value,b=+$('pixelLength').value,c=+$('measurePixels').value;if(a<=0||b<=0||c<=0){$('measureResult').textContent='세 값을 모두 양수로 입력하세요.';return}$('measureResult').textContent='계산 결과: '+(a*c/b).toFixed(2)+' cm'};
-$('modelFile').onchange=()=>{const f=$('modelFile').files[0];if(!f)return;$('viewerBox').innerHTML='<strong>'+esc(f.name)+'</strong><br><span class="small">파일이 선택되었습니다. 이 버전은 모델 파일을 실제 3D로 렌더링하지 않습니다. Three.js 기반 뷰어 연결이 다음 개발 단계입니다.</span>';$('modelInfo').textContent='파일 크기: '+(f.size/1024/1024).toFixed(2)+' MB'};
-window.addEventListener('beforeunload',stopCamera);
-(async()=>{try{db=await openDB();await ensureProject();await renderAll()}catch(e){notify('로컬 저장소를 열 수 없습니다: '+e.message)}})();
-</script>
-</body></html>
+function openDB(){return new Promise((ok,no)=>{let r=indexedDB.open(DB,1);r.onupgradeneeded=()=>{r.result.createObjectStore('photos',{keyPath:'id'});r.result.createObjectStore('projects',{keyPath:'id'})};r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
+function tx(store,op,val){return new Promise((ok,no)=>{let t=db.transaction(store,op==='getAll'?'readonly':'readwrite'),s=t.objectStore(store),r=op==='getAll'?s.getAll():op==='put'?s.put(val):op==='delete'?s.delete(val):s.get(val);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function note(s){$('coverageText').textContent=s}
+function tabs(){document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('section').forEach(x=>x.classList.toggle('on',x.id===b.dataset.tab));if(b.dataset.tab==='restore')refreshPhotos()})}
+async function init(){db=await openDB();let ps=await tx('projects','getAll');if(!ps.length){await tx('projects','put',{id:'home',name:'내 첫 공간',rooms:[{id:'room1',name:'거실'}]})}await renderProjects();await refreshPhotos();tabs();drawMap()}
+async function renderProjects(){let ps=await tx('projects','getAll');$('projectList').innerHTML=ps.map(p=>'<div class="card"><b>'+safe(p.name)+'</b><p class="small muted">'+p.rooms.length+'개 방</p><button data-select="'+p.id+'">이 프로젝트 촬영</button></div>').join('');document.querySelectorAll('[data-select]').forEach(b=>b.onclick=async()=>{projectId=b.dataset.select;let p=await tx('projects','get',projectId);roomId=p.rooms[0].id;fillRooms(p);document.querySelector('[data-tab="capture"]').click()});if(ps.length)fillRooms(ps.find(p=>p.id===projectId)||ps[0])}
+function fillRooms(p){$('room').innerHTML=p.rooms.map(r=>'<option value="'+r.id+'">'+safe(r.name)+'</option>').join('');roomId=$('room').value}
+function safe(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+$('newProject').onclick=async()=>{let n=prompt('프로젝트 이름');if(!n)return;let p={id:id(),name:n,rooms:[{id:id(),name:'첫 번째 방'}]};await tx('projects','put',p);projectId=p.id;await renderProjects()};
+$('room').onchange=()=>{roomId=$('room').value;refreshPhotos()};
+async function startCamera(){try{stream=await navigator.mediaDevices.getUserMedia({audio:true,video:{facingMode:{ideal:facing},width:{ideal:1280},height:{ideal:720}}});$('video').srcObject=stream;$('msg').style.display='none';$('snap').disabled=false;note('카메라가 켜졌습니다. 방 안을 천천히 회전하며 촬영하세요.');trackOrientation()}catch(e){note('카메라 권한을 허용하고 HTTPS 주소에서 다시 시도하세요: '+e.message)}}
+function stopCamera(){if(recorder&&recorder.state!=='inactive')recorder.stop();if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('video').srcObject=null;$('msg').style.display='grid';$('snap').disabled=true;cancelAnimationFrame(raf)}
+$('start').onclick=startCamera;$('stop').onclick=stopCamera;$('switch').onclick=async()=>{facing=facing==='environment'?'user':'environment';if(stream){stopCamera();await startCamera()}};
+const targets=['정면 벽','왼쪽 벽','오른쪽 벽','뒤쪽 벽','바닥','천장'];function setTarget(){ $('aimLabel').textContent=mode==='guided'?targets[target%targets.length]+'을 네모 안에 맞추세요':'자유 촬영 모드';}
+$('guided').onclick=()=>{mode='guided';$('guided').classList.add('primary');$('free').classList.remove('primary');setTarget()};$('free').onclick=()=>{mode='free';$('free').classList.add('primary');$('guided').classList.remove('primary');setTarget()};$('nextTarget').onclick=()=>{target++;setTarget();note('다음 촬영 영역: '+targets[target%targets.length])};
+async function capture(blob){let item={id:id(),projectId,roomId,created:Date.now(),blob};await tx('photos','put',item);coverage.add((target%6));drawMap();await refreshPhotos();note('사진을 기기에 저장했습니다. 촬영 영역 '+coverage.size+'/6')}
+$('snap').onclick=()=>{let v=$('video'),c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);c.toBlob(capture,'image/jpeg',.92);if(mode==='guided')target++ ;setTarget()};
+$('record').onclick=()=>{if(!stream){note('먼저 카메라를 시작하세요.');return}if(recorder&&recorder.state==='recording'){recorder.stop();$('record').textContent='영상 촬영 시작';return}chunks=[];recorder=new MediaRecorder(stream);recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};recorder.onstop=async()=>{let blob=new Blob(chunks,{type:recorder.mimeType||'video/webm'});let item={id:id(),projectId,roomId,created:Date.now(),blob,kind:'video'};await tx('photos','put',item);await refreshPhotos();note('영상 파일을 로컬에 저장했습니다. 영상 자체를 3D로 실시간 복원하는 엔진은 아직 연결되지 않았습니다.')};recorder.start(1000);$('record').textContent='영상 촬영 종료';note('영상 녹화 중 — 아래 지도는 촬영 방향 커버리지를 표시합니다.')};
+async function refreshPhotos(){let all=await tx('photos','getAll');photos=all.filter(p=>p.projectId===projectId&&p.roomId===roomId);$('photoCount').textContent=photos.length+'개';$('restoreCount').textContent=photos.filter(p=>!p.kind).length+'장';$('photos').innerHTML=photos.slice(-15).reverse().map(p=>p.kind?'<div class="small muted">🎞 영상</div>':'<img src="'+URL.createObjectURL(p.blob)+'">').join('')}
+function trackOrientation(){if(!window.DeviceOrientationEvent){note('기기 방향 센서를 사용할 수 없습니다. 촬영 방향은 수동 영역 표시로 기록합니다.');return}window.addEventListener('deviceorientation',orientation,{passive:true});}
+function orientation(e){if(e.alpha==null)return;let yaw=Math.round(((e.alpha%360)+360)%360/30)%12,pitch=Math.max(0,Math.min(5,Math.round((e.beta||0)/30+2)));coverage.add(yaw+'-'+pitch);drawMap()}
+function drawMap(){let c=$('map'),x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);let cx=300,base=290,w=36,h=28;for(let r=0;r<6;r++){for(let col=0;col<12;col++){let filled=coverage.has(col+'-'+r)||coverage.has(r);let px=cx+(col-5.5)*w+(r-2.5)*12,py=base-r*31-Math.abs(col-5.5)*5;x.beginPath();x.moveTo(px,py);x.lineTo(px+w/2,py-12);x.lineTo(px+w,py);x.lineTo(px+w/2,py+12);x.closePath();x.fillStyle=filled?'#39d353':'#263342';x.fill();x.strokeStyle='#607080';x.stroke()}}let n=coverage.size,percent=Math.min(100,Math.round(n/72*100));$('progress').style.width=percent+'%';$('coverageText').textContent='방향 샘플 '+n+'개 기록됨 · 촬영 범위 참고용 (깊이 복원 아님)'}
+$('make3d').onclick=async()=>{let all=await tx('photos','getAll'),set=all.filter(p=>p.projectId===projectId&&p.roomId===roomId&&!p.kind);if(set.length<3){$('restoreStatus').textContent='사진이 부족합니다. 여러 방향에서 사진을 더 촬영하세요.';return}let manifest={format:'RealityMapCaptureSet',version:1,created:new Date().toISOString(),projectId,roomId,photoCount:set.length,files:set.map((p,i)=>({index:i+1,created:p.created}))};let blob=new Blob([JSON.stringify(manifest,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='realitymap-reconstruction-manifest.json';a.click();$('restoreStatus').innerHTML='<span class="good">촬영 세트 확인 완료 · '+set.length+'장</span><br>복원 작업용 manifest를 내보냈습니다. 실제 3D 생성은 복원 엔진 연결 전까지 수행되지 않습니다.'};
+window.addEventListener('beforeunload',stopCamera);init().catch(e=>note('초기화 오류: '+e.message));
+</script></body></html>
