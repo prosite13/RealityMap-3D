@@ -5,7 +5,7 @@ plugins {
 android {
     namespace = "com.realitymap3d"
     compileSdk = 35
-    defaultConfig {
+    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n    kotlinOptions {\n        jvmTarget = "17"\n    }\n    defaultConfig {
         applicationId = "com.realitymap3d"
         minSdk = 26
         targetSdk = 35
